@@ -1,35 +1,33 @@
 package com.veselovvv.jokes
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
-import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.google.android.material.textview.MaterialTextView
 
 class MainActivity : AppCompatActivity() {
-
     private lateinit var viewModel: ViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        setup()
+    }
 
-        viewModel = (application as JokesApp).viewModel
-
+    private fun setup() {
+        val button: MaterialButton = findViewById(R.id.button)
         val linearProgressIndicator: LinearProgressIndicator = findViewById(R.id.linearProgressIndicator)
         val textView: MaterialTextView = findViewById(R.id.textView)
-        val button: MaterialButton = findViewById(R.id.button)
 
-        linearProgressIndicator.visibility = View.INVISIBLE
+        setupViewModel(button, linearProgressIndicator, textView)
+        setupProgressIndicator(linearProgressIndicator)
+        setupButton(button, linearProgressIndicator)
+    }
 
-        button.setOnClickListener {
-            button.isEnabled = false
-            linearProgressIndicator.visibility = View.VISIBLE
-            viewModel.getJoke()
-        }
+    private fun setupViewModel(button: MaterialButton, linearProgressIndicator: LinearProgressIndicator, textView: MaterialTextView) {
+        viewModel = (application as JokesApp).viewModel
 
         viewModel.init(object : TextCallback {
             override fun provideText(text: String) = runOnUiThread {
@@ -38,6 +36,18 @@ class MainActivity : AppCompatActivity() {
                 textView.text = text
             }
         })
+    }
+
+    private fun setupProgressIndicator(linearProgressIndicator: LinearProgressIndicator) {
+        linearProgressIndicator.visibility = View.INVISIBLE
+    }
+
+    private fun setupButton(button: MaterialButton, linearProgressIndicator: LinearProgressIndicator) {
+        button.setOnClickListener {
+            button.isEnabled = false
+            linearProgressIndicator.visibility = View.VISIBLE
+            viewModel.getJoke()
+        }
     }
 
     override fun onDestroy() {

@@ -5,7 +5,6 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class JokesApp : Application() {
-
     lateinit var viewModel: ViewModel
 
     override fun onCreate() {
@@ -16,9 +15,11 @@ class JokesApp : Application() {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
-        viewModel = ViewModel(BaseModel(
-            retrofit.create(JokeService::class.java),
-            BaseResourceManager(this)
-        ))
+        viewModel = ViewModel(
+            Model.Base(
+                retrofit.create(JokeService::class.java),
+                ResourceManager.Base(this)
+            )
+        )
     }
 }
