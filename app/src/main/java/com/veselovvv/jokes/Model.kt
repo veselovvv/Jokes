@@ -13,19 +13,19 @@ interface Model {
         private val service: JokeService,
         private val resourceManager: ResourceManager
     ) : Model {
-        private var callback: ResultCallback? = null // TODO get rid of null
+        private var callback: ResultCallback = ResultCallback.Empty()
         private val noConnection by lazy { JokeError.NoConnection(resourceManager) }
         private val serviceUnavailable by lazy { JokeError.ServiceUnavailable(resourceManager) }
 
         override fun getJoke() = service.getJoke().enqueue(
             object : retrofit2.Callback<JokeDTO> {
                 override fun onResponse(call: Call<JokeDTO>, response: Response<JokeDTO>) {
-                    if (response.isSuccessful) callback?.provideSuccess(response.body()!!.toJoke())
-                    else callback?.provideError(serviceUnavailable)
+                    if (response.isSuccessful) callback.provideSuccess(response.body()!!.toJoke())
+                    else callback.provideError(serviceUnavailable)
                 }
 
                 override fun onFailure(call: Call<JokeDTO>, t: Throwable) {
-                    callback?.provideError(
+                    callback.provideError(
                         if (t is UnknownHostException) noConnection else serviceUnavailable
                     )
                 }
@@ -37,7 +37,7 @@ interface Model {
         }
 
         override fun clear() {
-            callback = null
+            callback = ResultCallback.Empty()
         }
     }
 }
