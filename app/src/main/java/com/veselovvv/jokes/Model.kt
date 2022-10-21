@@ -13,23 +13,24 @@ interface Model {
         private val service: JokeService,
         private val resourceManager: ResourceManager
     ) : Model {
-        private var callback: ResultCallback? = null
+        private var callback: ResultCallback? = null // TODO get rid of null
         private val noConnection by lazy { JokeError.NoConnection(resourceManager) }
         private val serviceUnavailable by lazy { JokeError.ServiceUnavailable(resourceManager) }
 
-        override fun getJoke() {
-            service.getJoke().enqueue(object : retrofit2.Callback<JokeDTO> {
+        override fun getJoke() = service.getJoke().enqueue(
+            object : retrofit2.Callback<JokeDTO> {
                 override fun onResponse(call: Call<JokeDTO>, response: Response<JokeDTO>) {
                     if (response.isSuccessful) callback?.provideSuccess(response.body()!!.toJoke())
                     else callback?.provideError(serviceUnavailable)
                 }
 
                 override fun onFailure(call: Call<JokeDTO>, t: Throwable) {
-                    if (t is UnknownHostException) callback?.provideError(noConnection)
-                    else callback?.provideError(serviceUnavailable)
+                    callback?.provideError(
+                        if (t is UnknownHostException) noConnection else serviceUnavailable
+                    )
                 }
-            })
-        }
+            }
+        )
 
         override fun init(callback: ResultCallback) {
             this.callback = callback

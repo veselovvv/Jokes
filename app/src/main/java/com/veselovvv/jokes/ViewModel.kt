@@ -1,7 +1,7 @@
 package com.veselovvv.jokes
 
 class ViewModel(private val model: Model) {
-    private var callback: TextCallback? = null
+    private var callback: TextCallback? = null // TODO get rid of null
 
     fun init(callback: TextCallback) {
         this.callback = callback

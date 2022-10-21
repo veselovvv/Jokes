@@ -5,13 +5,13 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class JokesApp : Application() {
-    lateinit var viewModel: ViewModel
+    private lateinit var viewModel: ViewModel
 
     override fun onCreate() {
         super.onCreate()
 
         val retrofit = Retrofit.Builder()
-            .baseUrl("https://www.google.com")
+            .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
@@ -21,5 +21,11 @@ class JokesApp : Application() {
                 ResourceManager.Base(this)
             )
         )
+    }
+
+    fun getViewModel() = viewModel
+
+    companion object {
+        private const val BASE_URL = "https://www.google.com"
     }
 }

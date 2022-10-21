@@ -1,13 +1,20 @@
 package com.veselovvv.jokes
 
+import androidx.annotation.StringRes
+
 interface JokeError {
     fun getMessage(): String
 
-    class NoConnection(private val resourceManager: ResourceManager) : JokeError {
-        override fun getMessage() = resourceManager.getString(R.string.no_connection)
+    abstract class Abstract(
+        private val resourceManager: ResourceManager,
+        @StringRes private val messageTextResId: Int
+    ) : JokeError {
+        override fun getMessage() = resourceManager.getString(messageTextResId)
     }
 
-    class ServiceUnavailable(private val resourceManager: ResourceManager) : JokeError {
-        override fun getMessage() = resourceManager.getString(R.string.service_unavailable)
-    }
+    class NoConnection(resourceManager: ResourceManager) :
+        Abstract(resourceManager, R.string.no_connection)
+
+    class ServiceUnavailable(resourceManager: ResourceManager) :
+        Abstract(resourceManager, R.string.service_unavailable)
 }

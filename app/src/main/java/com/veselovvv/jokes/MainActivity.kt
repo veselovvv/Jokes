@@ -13,39 +13,23 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        setup()
-    }
 
-    private fun setup() {
-        val button: MaterialButton = findViewById(R.id.button)
-        val linearProgressIndicator: LinearProgressIndicator = findViewById(R.id.linearProgressIndicator)
-        val textView: MaterialTextView = findViewById(R.id.textView)
+        val button = findViewById<MaterialButton>(R.id.button)
+        val linearProgressIndicator = findViewById<LinearProgressIndicator>(R.id.linearProgressIndicator)
 
-        setupViewModel(button, linearProgressIndicator, textView)
-        setupProgressIndicator(linearProgressIndicator)
-        setupButton(button, linearProgressIndicator)
-    }
-
-    private fun setupViewModel(button: MaterialButton, linearProgressIndicator: LinearProgressIndicator, textView: MaterialTextView) {
-        viewModel = (application as JokesApp).viewModel
-
+        viewModel = (application as JokesApp).getViewModel()
         viewModel.init(object : TextCallback {
             override fun provideText(text: String) = runOnUiThread {
                 button.isEnabled = true
-                linearProgressIndicator.visibility = View.INVISIBLE
-                textView.text = text
+                linearProgressIndicator.show(false)
+                findViewById<MaterialTextView>(R.id.textView).text = text
             }
         })
-    }
 
-    private fun setupProgressIndicator(linearProgressIndicator: LinearProgressIndicator) {
-        linearProgressIndicator.visibility = View.INVISIBLE
-    }
-
-    private fun setupButton(button: MaterialButton, linearProgressIndicator: LinearProgressIndicator) {
+        linearProgressIndicator.show(false)
         button.setOnClickListener {
             button.isEnabled = false
-            linearProgressIndicator.visibility = View.VISIBLE
+            linearProgressIndicator.show(true)
             viewModel.getJoke()
         }
     }
@@ -53,5 +37,9 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         viewModel.clear()
         super.onDestroy()
+    }
+
+    fun LinearProgressIndicator.show(show: Boolean) {
+        visibility = if (show) View.VISIBLE else View.INVISIBLE
     }
 }
