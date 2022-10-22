@@ -8,7 +8,7 @@ import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.google.android.material.textview.MaterialTextView
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var viewModel: ViewModel
+    private lateinit var viewModel: JokesViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -16,15 +16,19 @@ class MainActivity : AppCompatActivity() {
 
         val button = findViewById<MaterialButton>(R.id.button)
         val linearProgressIndicator = findViewById<LinearProgressIndicator>(R.id.linearProgressIndicator)
+        val textView = findViewById<MaterialTextView>(R.id.textView)
 
         viewModel = (application as JokesApp).getViewModel()
         viewModel.init(object : TextCallback {
             override fun provideText(text: String) = runOnUiThread {
                 button.isEnabled = true
                 linearProgressIndicator.show(false)
-                findViewById<MaterialTextView>(R.id.textView).text = text
+                textView.text = text
+                viewModel.saveJokeText(text)
             }
         })
+
+        textView.text = viewModel.getJokeText()
 
         linearProgressIndicator.show(false)
         button.setOnClickListener {

@@ -1,7 +1,8 @@
 package com.veselovvv.jokes
 
-class ViewModel(private val model: Model) {
+class JokesViewModel(private val model: Model) {
     private var callback: TextCallback = TextCallback.Empty()
+    private var jokeText = ""
 
     fun init(callback: TextCallback) {
         this.callback = callback
@@ -13,6 +14,12 @@ class ViewModel(private val model: Model) {
     }
 
     fun getJoke() = model.getJoke()
+
+    fun saveJokeText(jokeText: String) {
+        this.jokeText = jokeText
+    }
+
+    fun getJokeText() = jokeText
 
     fun clear() {
         callback = TextCallback.Empty()
